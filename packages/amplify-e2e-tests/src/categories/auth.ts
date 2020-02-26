@@ -414,6 +414,80 @@ export function addAuthWithDefaultSocial(cwd: string, settings: any, verbose: bo
   });
 }
 
+export function addAuthWithGroupsAndAdminAPI(cwd: string, settings: any, verbose: boolean = !isCI()) {
+  return new Promise((resolve, reject) => {
+    nexpect
+      .spawn(getCLIPath(), ['add', 'auth'], { cwd, stripColors: true, verbose })
+      .wait('Do you want to use the default authentication and security configuration')
+      .send('jj')
+      .sendline('\r') // Manual configuration
+      .wait('Select the authentication/authorization services that you want to use')
+      .sendline('\r') // for sign-up/-in and IAM controls
+      .wait('Please provide a friendly name for your resource that will be used')
+      .sendline('\r') // Default
+      .wait('Please enter a name for your identity pool')
+      .sendline('\r') // Default
+      .wait('Allow unauthenticated logins')
+      .sendline('\r') // No
+      .wait('Do you want to enable 3rd party authentication providers')
+      .send('j')
+      .sendline('\r') // No
+      .wait('Please provide a name for your user pool')
+      .sendline('\r') // Default
+      .wait('How do you want users to be able to sign in')
+      .sendline('\r') // Username
+      .wait('Do you want to add User Pool Groups')
+      .sendline('\r') // Yes
+      .wait('Provide a name for your user pool group')
+      .sendline('Admins')
+      .wait('Do you want to add another User Pool Group')
+      .sendline('y')
+      .wait('Provide a name for your user pool group')
+      .sendline('Users')
+      .wait('Do you want to add another User Pool Group')
+      .sendline('n')
+      .wait('Sort the user pool groups in order of preference')
+      .sendline('\r') // As is, Admins, Users
+      .wait('Do you want to add an admin queries API')
+      .sendline('\r') // Yes
+      .wait('Do you want to restrict access to the admin queries API')
+      .sendline('y')
+      .wait('Select the group to restrict access with')
+      .sendline('\r') // Admins
+      .wait('Multifactor authentication (MFA) user login options')
+      .sendline('\r') // OFF
+      .wait('Email based user registration/forgot password')
+      .sendline('\r') // Enabled
+      .wait('Please specify an email verification subject')
+      .sendline('\r') // Your verification code
+      .wait('Please specify an email verification message')
+      .sendline('\r') // Your verification code is {####}
+      .wait('Do you want to override the default password policy')
+      .sendline('n')
+      .wait('What attributes are required for signing up')
+      .sendline('\r') // Email
+      .wait("Specify the app's refresh token expiration period")
+      .sendline('\r') // 30
+      .wait('Do you want to specify the user attributes this app can read and write')
+      .sendline('n')
+      .wait('Do you want to enable any of the following capabilities')
+      .sendline('\r') // None
+      .wait('Do you want to use an OAuth flow')
+      .send('j')
+      .sendline('\r') // No
+      .wait('Do you want to configure Lambda Triggers for Cognito')
+      .sendline('n')
+      .sendEof()
+      .run((err: Error) => {
+        if (!err) {
+          resolve();
+        } else {
+          reject(err);
+        }
+      });
+  });
+}
+
 export function addAuthWithMaxOptions(cwd: string, settings: any, verbose: boolean = !isCI()) {
   return new Promise((resolve, reject) => {
     nexpect

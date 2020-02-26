@@ -131,42 +131,6 @@ export function updateDDBWithTrigger(cwd: string, settings: any, verbose: boolea
   });
 }
 
-export function addS3WithTrigger(cwd: string, settings: any, verbose: boolean = !isCI()) {
-  return new Promise((resolve, reject) => {
-    nexpect
-      .spawn(getCLIPath(), ['add', 'storage'], { cwd, stripColors: true, verbose })
-      .wait('Please select from one of the below mentioned services')
-      .sendline('\r')
-      .wait('Please provide a friendly name')
-      .sendline('\r')
-      .wait('Please provide bucket name')
-      .sendline('\r')
-      .wait('Who should have access')
-      .sendline('\r')
-      .wait('What kind of access do you want')
-      .send(' ')
-      .sendline('\r')
-      .wait('Do you want to add a Lambda Trigger for your S3 Bucket')
-      .sendline('y')
-      .sendline('\r')
-      .wait('Select from the following options')
-      // j = down arrow
-      .sendline('j')
-      .sendline('\r')
-      .wait('Do you want to edit the local')
-      .sendline('n')
-      .sendline('\r')
-      .sendEof()
-      .run((err: Error) => {
-        if (!err) {
-          resolve();
-        } else {
-          reject(err);
-        }
-      });
-  });
-}
-
 export function updateSimpleDDBwithGSI(cwd: string, settings: any, verbose: boolean = !isCI()) {
   return new Promise((resolve, reject) => {
     nexpect
@@ -218,6 +182,7 @@ export function updateSimpleDDBwithGSI(cwd: string, settings: any, verbose: bool
       });
   });
 }
+
 export function addSimpleDDBwithGSI(cwd: string, settings: any, verbose: boolean = !isCI()) {
   return new Promise((resolve, reject) => {
     nexpect
@@ -263,6 +228,150 @@ export function addSimpleDDBwithGSI(cwd: string, settings: any, verbose: boolean
       .sendline('n')
       .sendline('\r')
       .wait('Do you want to add a Lambda Trigger for your Table')
+      .sendline('n')
+      .sendline('\r')
+      .sendEof()
+      .run((err: Error) => {
+        if (!err) {
+          resolve();
+        } else {
+          reject(err);
+        }
+      });
+  });
+}
+
+// Adds auth and S3 to test case where user adds storage without adding auth first
+export function addS3AndAuthWithAuthOnlyAccess(cwd: string, settings: any, verbose: boolean = !isCI()) {
+  return new Promise((resolve, reject) => {
+    nexpect
+      .spawn(getCLIPath(), ['add', 'storage'], { cwd, stripColors: true, verbose })
+      .wait('Please select from one of the below mentioned services')
+      .sendline('\r') // Content
+      .wait('You need to add auth (Amazon Cognito) to your project in order to add storage')
+      .sendline('y')
+      .wait('Do you want to use the default authentication and security configuration')
+      .sendline('\r') // Default config
+      .wait('How do you want users to be able to sign in')
+      .sendline('\r') // Username
+      .wait('Do you want to configure advanced settings')
+      .sendline('\r') // No, I am done.
+      .wait('Please provide a friendly name for your resource')
+      .sendline('\r') // Default name
+      .wait('Please provide bucket name')
+      .sendline('\r') // Default name
+      .wait('Who should have access')
+      .sendline('\r') // Auth users only
+      .wait('What kind of access do you want for Authenticated users')
+      .sendline('i') // Select all
+      .sendline('\r')
+      .wait('Do you want to add a Lambda Trigger for your S3 Bucket')
+      .sendline('n')
+      .sendEof()
+      .run((err: Error) => {
+        if (!err) {
+          resolve();
+        } else {
+          reject(err);
+        }
+      });
+  });
+}
+
+export function addS3WithGuestAccess(cwd: string, settings: any, verbose: boolean = !isCI()) {
+  return new Promise((resolve, reject) => {
+    nexpect
+      .spawn(getCLIPath(), ['add', 'storage'], { cwd, stripColors: true, verbose })
+      .wait('Please select from one of the below mentioned services')
+      .sendline('\r') // Content
+      .wait('Please provide a friendly name for your resource')
+      .sendline('\r') // Default name
+      .wait('Please provide bucket name')
+      .sendline('\r') // Default name
+      .wait('Who should have access')
+      .send('j')
+      .sendline('\r') // Auth and guest users
+      .wait('What kind of access do you want for Authenticated users')
+      .send('i') // Select all
+      .sendline('\r')
+      .wait('What kind of access do you want for Guest users')
+      .send('j')
+      .send(' ') // Select read
+      .sendline('\r')
+      .wait('Do you want to add a Lambda Trigger for your S3 Bucket')
+      .sendline('n')
+      .sendEof()
+      .run((err: Error) => {
+        if (!err) {
+          resolve();
+        } else {
+          reject(err);
+        }
+      });
+  });
+}
+
+// Expects 2 existing user pool groups
+export function addS3WithGroupAccess(cwd: string, settings: any, verbose: boolean = !isCI()) {
+  return new Promise((resolve, reject) => {
+    nexpect
+      .spawn(getCLIPath(), ['add', 'storage'], { cwd, stripColors: true, verbose })
+      .wait('Please select from one of the below mentioned services')
+      .sendline('\r') // Content
+      .wait('Please provide a friendly name for your resource')
+      .sendline('\r') // Default name
+      .wait('Please provide bucket name')
+      .sendline('\r') // Default name
+      .wait('Restrict access by')
+      .send('j')
+      .sendline('\r') // Individual groups
+      .wait('Select groups')
+      .send('i') // Select all groups
+      .sendline('\r')
+      .wait('What kind of access do you want') // for <UserGroup1> users?
+      .send('i') // Select all permissions
+      .sendline('\r')
+      .wait('What kind of access do you want') // for <UserGroup2> users?
+      .send(' ') // Select create/update
+      .send('j')
+      .send(' ') // Select read
+      .sendline('\r')
+      .wait('Do you want to add a Lambda Trigger for your S3 Bucket')
+      .sendline('n')
+      .sendEof()
+      .run((err: Error) => {
+        if (!err) {
+          resolve();
+        } else {
+          reject(err);
+        }
+      });
+  });
+}
+
+export function addS3WithTrigger(cwd: string, settings: any, verbose: boolean = !isCI()) {
+  return new Promise((resolve, reject) => {
+    nexpect
+      .spawn(getCLIPath(), ['add', 'storage'], { cwd, stripColors: true, verbose })
+      .wait('Please select from one of the below mentioned services')
+      .sendline('\r')
+      .wait('Please provide a friendly name')
+      .sendline('\r')
+      .wait('Please provide bucket name')
+      .sendline('\r')
+      .wait('Who should have access')
+      .sendline('\r')
+      .wait('What kind of access do you want')
+      .send(' ')
+      .sendline('\r')
+      .wait('Do you want to add a Lambda Trigger for your S3 Bucket')
+      .sendline('y')
+      .sendline('\r')
+      .wait('Select from the following options')
+      // j = down arrow
+      .sendline('j')
+      .sendline('\r')
+      .wait('Do you want to edit the local')
       .sendline('n')
       .sendline('\r')
       .sendEof()
