@@ -8,7 +8,6 @@ module.exports = {
       context.print.error('You must pass in the name of the environment using the --name flag');
       process.exit(1);
     }
-    let envFound = false;
     const allEnvs = context.amplify.getEnvDetails();
 
     if (context.parameters.options.json) {
@@ -20,29 +19,23 @@ module.exports = {
       return;
     }
 
-    Object.keys(allEnvs).forEach(env => {
-      if (env === envName) {
-        envFound = true;
-        context.print.info('');
-        context.print.info(chalk.red(env));
-        context.print.info('--------------');
+    if (envName in allEnvs) {
+      const env = allEnvs[envName];
+      context.print.info('');
+      context.print.info(chalk.red(envName));
+      context.print.info('--------------');
 
-        Object.keys(allEnvs[env]).forEach(provider => {
-          context.print.info(`Provider: ${provider}`);
+      Object.keys(env).forEach(provider => {
+        context.print.info(`Provider: ${provider}`);
 
-          Object.keys(allEnvs[env][provider]).forEach(providerAttr => {
-            context.print.info(`${providerAttr}: ${allEnvs[env][provider][providerAttr]}`);
-          });
-
-          context.print.info('--------------');
-          context.print.info('');
+        Object.keys(env[provider]).forEach(providerAttr => {
+          context.print.info(`${providerAttr}: ${env[provider][providerAttr]}`);
         });
 
+        context.print.info('--------------');
         context.print.info('');
-      }
-    });
-
-    if (!envFound) {
+      });
+    } else {
       context.print.error('No environment found with the corresponding name provided');
     }
   },
