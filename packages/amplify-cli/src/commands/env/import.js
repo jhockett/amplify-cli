@@ -25,7 +25,7 @@ module.exports = {
         awsInfo = JSON.parse(context.parameters.options.awsInfo);
       } catch (e) {
         context.print.error(
-          'You must pass in the AWS credential info in an object format for intializating your environment using the --awsInfo flag',
+          'You must pass in the AWS credential info in an object format to initialize your environment using the --awsInfo flag',
         );
         process.exit(1);
       }
