@@ -5,7 +5,7 @@ async function transformUserPoolGroupSchema(context) {
     context.amplify.pathManager.getBackendDirPath(),
     'auth',
     'userPoolGroups',
-    'user-pool-group-precedence.json'
+    'user-pool-group-precedence.json',
   );
 
   const { allResources } = await context.amplify.getResourceStatus();
@@ -16,7 +16,7 @@ async function transformUserPoolGroupSchema(context) {
     const resource = authResource[0];
     authResourceName = resource.resourceName;
   } else {
-    throw new Error('Cognito UserPool does not exists');
+    throw new Error('Cognito UserPool does not exist');
   }
 
   const groups = context.amplify.readJsonFile(resourceDirPath);

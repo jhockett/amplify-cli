@@ -7,7 +7,7 @@ async function getAuthResourceName(context) {
     const resource = authResource[0];
     authResourceName = resource.resourceName;
   } else {
-    throw new Error('Cognito UserPool does not exists');
+    throw new Error('Cognito UserPool does not exist');
   }
   return authResourceName;
 }
