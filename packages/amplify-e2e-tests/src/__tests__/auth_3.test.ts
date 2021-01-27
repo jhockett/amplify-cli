@@ -1,20 +1,19 @@
-import { initJSProjectWithProfile, deleteProject, amplifyPushAuth } from 'amplify-e2e-core';
 import {
-  addAuthWithDefault,
-  removeAuthWithDefault,
-  addAuthWithMaxOptions,
   addAuthUserPoolOnly,
-  getBackendAmplifyMeta,
-} from 'amplify-e2e-core';
-import {
+  addAuthWithDefault,
+  addAuthWithMaxOptions,
+  amplifyPushAuth,
   createNewProjectDir,
+  deleteProject,
   deleteProjectDir,
+  getBackendAmplifyMeta,
+  getLambdaFunction,
   getProjectMeta,
   getUserPool,
   getUserPoolClients,
-  getLambdaFunction,
+  initJSProjectWithProfile,
+  removeAuthWithDefault,
 } from 'amplify-e2e-core';
-import _ from 'lodash';
 
 const defaultsSettings = {
   name: 'authTest',

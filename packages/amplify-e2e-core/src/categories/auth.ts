@@ -840,7 +840,7 @@ export function addAuthWithMaxOptions(cwd: string, settings: any) {
       .sendCarriageReturn()
       .wait('What attributes are required for signing up?')
       .sendCarriageReturn()
-      .wait('Specify the app')
+      .wait("Specify the app's refresh token expiration period (in days)")
       .sendCarriageReturn()
       .wait('Do you want to specify the user attributes this app')
       .sendLine('y')
