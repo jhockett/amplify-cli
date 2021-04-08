@@ -185,7 +185,7 @@ export function layerInputParamsToLayerPermissionArray(parameters: LayerInputPar
 
 export function loadStoredLayerParameters(context: $TSContext, layerName: string): LayerParameters {
   const backendDirPath = pathManager.getBackendDirPath();
-  const { permissions, runtimes } = getLayerConfiguration(backendDirPath, layerName);
+  const { permissions, runtimes, description } = getLayerConfiguration(backendDirPath, layerName);
   return {
     layerName,
     runtimes,
@@ -195,6 +195,7 @@ export function loadStoredLayerParameters(context: $TSContext, layerName: string
       service: ServiceName.LambdaLayer,
       projectName: context.amplify.getProjectDetails().projectConfig.projectName,
     },
+    description,
     build: true,
   };
 }
